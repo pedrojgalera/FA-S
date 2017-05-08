@@ -82,3 +82,9 @@ transition_function = {
     ('s3', 'c'): 's1',
 }
 ex = finiteAutomaton(set(states), set(inputs), transition_function, 's1')
+
+#biostates = ['G+PC', 'G', 'GP', 'GX', 'BLOQUEO']
+#bioinputs = [
+#    'se adiere polimerasa',
+#    'se adiere polimerasa con Ccr4',
+#    'se']
