@@ -5,19 +5,22 @@ Created on Mon May  8 15:44:41 2017
 @author: pedrogalera
 """
 import numpy as np
-from utils import euclidean_distance
+from utils import euclidean_distance, new_number
 
 
 class sphere(object):
     """The geometrical model of a n-dimensional sphere."""
 
-    def __init__(self, center, radius, speed=None):
+    def __init__(self, name, radius, center=[0, 0, 0], speed=None, dfa=None):
         """To define an sphere it is only neccesary the coordinates of the
         center and the radius of the sphere.
         """
+        self.id = new_number()
+        self.name = name
         self.center = np.array(center)
         self.radius = radius
         self.speed = np.array(speed) if speed else np.zeros_like(self.center)
+        self.dfa = dfa
 
     def get_center(self):
         "Returns the center of the sphere."
@@ -66,10 +69,14 @@ class sphere(object):
         """
         return np.linalg.norm(self.get_center()) + self.get_radius()
 
-    def plot(self, ax):
-        phi = np.linspace(0, 2 * np.pi, 100)
-        theta = np.linspace(0, np.pi, 100)
-        xm = self.get_radius() * np.outer(np.cos(phi), np.sin(theta)) + self.get_center()[0] * np.ones_like(np.outer(np.cos(phi), np.sin(theta)))
-        ym = self.get_radius() * np.outer(np.sin(phi), np.sin(theta)) + self.get_center()[1] * np.ones_like(np.outer(np.cos(phi), np.sin(theta)))
-        zm = self.get_radius() * np.outer(np.ones(np.size(phi)), np.cos(theta)) + self.get_center()[2] * np.ones_like(np.outer(np.cos(phi), np.sin(theta)))
-        ax.plot_surface(xm, ym, zm)
+    def move(self, timedelta):
+        "Moves the sphere according to its speed and the time passed."
+        r = self.get_center()
+        v = self.get_speed()
+
+        self.set_center(r+v*timedelta)
+
+
+def create_collection_of_agents(number, name, radius, dfa=None):
+    "Returns a set of spheres created according to the specs."
+    return [sphere(name, radius, [0, 0, 0], None, dfa) for i in range(number)]

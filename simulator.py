@@ -4,19 +4,22 @@ Created on Tue Apr 18 11:23:37 2017
 
 @author: pedrogalera
 """
+import csv
 import numpy as np
 from random import shuffle
-from utils import boundary_collision, elastic_collision, move_sphere
+from utils import boundary_collision, elastic_collision, new_number
 
 
 class cell_cinetics_simulator(object):
     "To simulate a cell"
 
-    def __init__(self, radius, spheres):
+    def __init__(self, cell_radius, nucleus_radius, spheres):
         self.cell_center = np.array([0, 0, 0])
-        self.cell_radius = radius
+        self.cell_radius = cell_radius
+        self.nucleus_radius = nucleus_radius
         self.spheres = list(spheres)
         self.time = 0
+        self.file = 'sim'+str(new_number())
 
     def set_in_random_position(self, sphere):
         "Set the spheres randomly inside the cell. "
@@ -35,37 +38,52 @@ class cell_cinetics_simulator(object):
 
     def initialize_speeds(self):
         mean = [0, 0, 0]
-        cov = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
+        cov = [[100, 0, 0], [0, 100, 0], [0, 0, 100]]
         for sphere in self.spheres:
             sphere.set_speed(np.random.multivariate_normal(mean, cov))
 
     def next_frame(self, timedelta):
+#        collisions = 0
         # Boundary collisions
         for sphere in self.spheres:
 
             if sphere.farthest_distance_to_origin() > self.cell_radius:
                 boundary_collision(sphere)
+#                collisions += 1
 
         # Collision between spheres
+
         for i, sphere1 in enumerate(self.spheres):
             for sphere2 in self.spheres[i+1:]:
                 if sphere1.intersects(sphere2):
                     elastic_collision(sphere1, sphere2)
+#                    collisions += 1
 
         # Move spheres
         for sphere in self.spheres:
-            move_sphere(sphere, timedelta)
+            sphere.move(timedelta)
 
         # Shuffle spheres
         shuffle(self.spheres)
+#        print('collisions: '+str(collisions))
 
     def save(self):
-        pass
+        time = self.time
+        data = []
+        for sphere in self.spheres:
+            data.append([sphere.id,
+                         sphere.name,
+                         sphere.get_center(),
+                         sphere.get_radius()])
+        with open('./data/{}.csv'.format(self.file), 'a') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([time]+data)
 
     def run(self):
         self.initialize_positions()
         self.initialize_speeds()
-        while self.time < 1000:
+        while self.time < 10000:
             self.next_frame(1)
             self.time += 1
-            print(self.time)
+            self.save()
+#            print(self.time)

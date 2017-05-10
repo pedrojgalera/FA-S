@@ -6,21 +6,27 @@ Created on Mon May  8 13:46:23 2017
 """
 
 import numpy as np
+#from sphere import sphere
 
 
-class id_generator(object):
+class __number_generator(object):
     """Generator to create universal distinct ids."""
 
-    def incremental_loop():
+    def __incremental_loop():
         n = 0
         while True:
             yield n
             n += 1
 
-    i = incremental_loop()
+    __current_number = __incremental_loop()
 
-    def __call__(self):
-        return str(next(self.i))
+    @classmethod
+    def next_number(cls):
+        return next(cls.__current_number)
+
+
+def new_number():
+    return __number_generator.next_number()
 
 
 def euclidean_distance(v1, v2):
@@ -53,13 +59,12 @@ def boundary_collision(sphere):
 
     sphere.set_speed(speed_after_collision)
 
-
-def move_sphere(sphere, timedelta):
-    "Moves the sphere according to its speed and the time passed."
-    r = sphere.get_center()
-    v = sphere.get_speed()
-
-    sphere.set_center(r+v*timedelta)
+#def move_sphere(sphere, timedelta):
+#    "Moves the sphere according to its speed and the time passed."
+#    r = sphere.get_center()
+#    v = sphere.get_speed()
+#
+#    sphere.set_center(r+v*timedelta)
 
 
 def time_space_precision(list_of_spheres, alpha):
