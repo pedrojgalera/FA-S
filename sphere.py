@@ -11,13 +11,13 @@ from utils import euclidean_distance, new_number
 class sphere(object):
     """The geometrical model of a n-dimensional sphere."""
 
-    def __init__(self, name, radius, center=[0, 0, 0], speed=None, dfa=None):
+    def __init__(self, name, radius, center=[0, 0, 0], speed=None, dfa=None, id_number=None):
         """To define an sphere it is only neccesary the coordinates of the
         center and the radius of the sphere.
         """
-        self.id = new_number()
+        self.id = id_number if id_number else new_number()
         self.name = name
-        self.center = np.array(center)
+        self.center = center
         self.radius = radius
         self.speed = np.array(speed) if speed else np.zeros_like(self.center)
         self.dfa = dfa
@@ -77,6 +77,17 @@ class sphere(object):
         self.set_center(r+v*timedelta)
 
 
+
+
 def create_collection_of_agents(number, name, radius, dfa=None):
     "Returns a set of spheres created according to the specs."
     return [sphere(name, radius, [0, 0, 0], None, dfa) for i in range(number)]
+
+
+def point():
+    """clase de partiulas puntuales"""
+    pass
+
+
+
+
